@@ -26,13 +26,13 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun clickDatePicker(){
+    private fun clickDatePicker(){
          val myCalendar = Calendar.getInstance()
          val year = myCalendar.get(Calendar.YEAR)
          val month = myCalendar.get(Calendar.MONTH)
          val day = myCalendar.get(Calendar.DAY_OF_MONTH)
-        DatePickerDialog(this,
-        DatePickerDialog.OnDateSetListener { view, selectedYear, selectedMonth, selectedDayOfMonth ->
+         val dpd = DatePickerDialog(this,
+        DatePickerDialog.OnDateSetListener { _, selectedYear, selectedMonth, selectedDayOfMonth ->
             Toast.makeText(this,
                 "Year was ", Toast.LENGTH_LONG).show()
 
@@ -41,18 +41,22 @@ class MainActivity : AppCompatActivity() {
 
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
             val theDate = sdf.parse(selectedDate)
+            theDate?.let {
+                val selecteDateInMinutes = theDate.time / 60000
+                val currentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
 
-            val selecteDateInMinutes = theDate.time / 60000
+                currentDate?.let {
+                val currentDateInMinutes = currentDate.time / 60000
 
-            val currentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
-
-            val currentDateInMinutes = currentDate.time / 60000
-
-            val differenceInMinutes = currentDateInMinutes - selecteDateInMinutes
+                val differenceInMinutes = currentDateInMinutes - selecteDateInMinutes
 
             tvAgeInMinutes?.text = differenceInMinutes.toString()
+                }
+                }
+        }, year,month,day)
 
-        }, year,month,day).show()
+        dpd.datePicker.maxDate = System.currentTimeMillis() - 86400000
+        dpd.show()
 
 
 
